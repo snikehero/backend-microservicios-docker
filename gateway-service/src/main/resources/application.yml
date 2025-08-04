@@ -8,11 +8,11 @@ spring:
     gateway:
       routes:
         - id: inventory-route
-          uri: https://inventory-production-f2a0.up.railway.app
+          uri: lb://inventory-service
           predicates:
             - Path=/api/productos/**
         - id: operator-route
-          uri: https://operator-production-a9b6.up.railway.app
+          uri: lb://operator-service
           predicates:
             - Path=/api/operaciones/**
     globalcors:
