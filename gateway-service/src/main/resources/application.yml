@@ -15,10 +15,3 @@ spring:
           uri: lb://OPERATOR-SERVICE
           predicates:
             - Path=/api/operaciones/**
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://eureka-server:8761/eureka
