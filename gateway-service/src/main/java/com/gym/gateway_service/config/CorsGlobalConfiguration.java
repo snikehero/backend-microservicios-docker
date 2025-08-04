@@ -11,7 +11,7 @@ public class CorsGlobalConfiguration {
     @Bean
     public CorsWebFilter corsWebFilter() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("*"); // tu front-end
+        config.addAllowedOriginPattern("*"); // tu front-end
         config.addAllowedMethod("*"); // GET, POST, PUT, DELETE, etc.
         config.addAllowedHeader("*");
         config.setAllowCredentials(true); // si usas cookies o auth
