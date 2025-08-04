@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 @EnableFeignClients
-
+@EnableDiscoveryClient
 public class OperatorServiceApplication {
 
 	public static void main(String[] args) {
