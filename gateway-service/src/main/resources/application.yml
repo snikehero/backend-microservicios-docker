@@ -8,10 +8,14 @@ spring:
     gateway:
       routes:
         - id: inventory-route
-          uri: lb://inventory-service
+          uri: lb://INVENTORY-SERVICE
           predicates:
             - Path=/api/productos/**
         - id: operator-route
-          uri: lb://operator-service
+          uri: lb://OPERATOR-SERVICE
           predicates:
             - Path=/api/operaciones/**
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.loadbalancer: DEBUG
