@@ -47,11 +47,18 @@ public class OperacionController {
             for (OperacionProducto op : operacion.getProductos()) {
                 // Consultar datos del producto en buscador para enriquecer
                 BuscadorClient.ProductoDto producto = null;
-                try {
-                    producto = buscadorClient.getProductoById(op.getProductoId());
-                } catch (FeignException.NotFound e) {
-                    // Producto no encontrado, se puede manejar omitiendo o con valores nulos
-                }
+               try {
+    BuscadorClient.ProductoDto producto = buscadorClient.getProductoById(item.getProductoId());
+    if (producto == null) {
+        return ResponseEntity.badRequest().body("Producto no encontrado: " + item.getProductoId());
+    }
+    // build OperacionProducto...
+} catch (FeignException e) {
+    e.printStackTrace(); // <- this will give full detail
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+        .body("Error al obtener producto ID " + item.getProductoId() + ": " + e.contentUTF8());
+}
+
 
                 ItemOperacionResponseDTO itemDto = new ItemOperacionResponseDTO();
                 itemDto.setProductoId(op.getProductoId());
