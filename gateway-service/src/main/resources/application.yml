@@ -8,11 +8,11 @@ spring:
     gateway:
       routes:
         - id: inventory-route
-          uri: lb://inventory-service
+          uri: https://inventory-production-f2a0.up.railway.app
           predicates:
             - Path=/api/productos/**
         - id: operator-route
-          uri: lb://operator-service
+          uri: https://operator-production-a9b6.up.railway.app
           predicates:
             - Path=/api/operaciones/**
     globalcors:
@@ -36,9 +36,6 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
-  instance:
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
 
 logging:
   level:

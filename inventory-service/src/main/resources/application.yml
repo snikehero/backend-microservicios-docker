@@ -1,20 +1,5 @@
-
-server:
-  port: ${SERVER_PORT:8080}
-
 spring:
-  application:
-    name: ${SPRING_APPLICATION_NAME:inventory-service}
   data:
     elasticsearch:
-      uris: ${SPRING_ELASTICSEARCH_URIS:http://elasticsearch:9200}  # Asegúrate de definirlo como variable en Railway
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
-  instance:
-    prefer-ip-address: true
-    instance-id: ${spring.application.name}:${server.port}
+      uris: http://localhost:9200
+  
