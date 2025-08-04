@@ -1,9 +1,9 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 spring:
   application:
-    name: gateway-service
+    name: ${SPRING_APPLICATION_NAME:gateway-service}
   cloud:
     gateway:
       routes:
@@ -15,6 +15,14 @@ spring:
           uri: lb://OPERATOR-SERVICE
           predicates:
             - Path=/api/operaciones/**
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka}
+
 logging:
   level:
     org.springframework.cloud.gateway: DEBUG
