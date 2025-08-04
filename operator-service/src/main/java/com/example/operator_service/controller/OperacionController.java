@@ -34,51 +34,44 @@ public class OperacionController {
     // Obtener todas las operaciones con productos enriquecidos (nombre, imagen)
     @GetMapping
     public ResponseEntity<List<OperacionResponseDTO>> obtenerTodas() {
-    List<Operacion> operaciones = operacionRepository.findAll();
-    List<OperacionResponseDTO> response = new ArrayList<>();
+        List<Operacion> operaciones = operacionRepository.findAll();
+        List<OperacionResponseDTO> response = new ArrayList<>();
 
-    for (Operacion operacion : operaciones) {
-        OperacionResponseDTO dto = new OperacionResponseDTO();
-        dto.setId(operacion.getId());
-        dto.setTipo(operacion.getTipo());
-        dto.setFecha(operacion.getFecha());
+        for (Operacion operacion : operaciones) {
+            OperacionResponseDTO dto = new OperacionResponseDTO();
+            dto.setId(operacion.getId());
+            dto.setTipo(operacion.getTipo());
+            dto.setFecha(operacion.getFecha());
 
-        List<OperacionResponseDTO.ItemOperacionResponseDTO> productosDto = new ArrayList<>();
+            List<ItemOperacionResponseDTO> productosDto = new ArrayList<>();
+            for (OperacionProducto op : operacion.getProductos()) {
+                // Consultar datos del producto en buscador para enriquecer
+                BuscadorClient.ProductoDto producto = null;
+                try {
+                    producto = buscadorClient.getProductoById(op.getProductoId());
+                } catch (FeignException.NotFound e) {
+                    // Producto no encontrado, se puede manejar omitiendo o con valores nulos
+                }
 
-        for (OperacionProducto op : operacion.getProductos()) {
-            BuscadorClient.ProductoDto productoDto = null;
-
-            try {
-                productoDto = buscadorClient.getProductoById(op.getProductoId());
-            } catch (FeignException e) {
-                e.printStackTrace();
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error al contactar con inventory-service: " + e.contentUTF8());  
+                ItemOperacionResponseDTO itemDto = new ItemOperacionResponseDTO();
+                itemDto.setProductoId(op.getProductoId());
+                itemDto.setCantidad(op.getCantidad());
+                if (producto != null) {
+                    itemDto.setNombre(producto.getName());
+                    itemDto.setImagen(producto.getImage());
+                } else {
+                    itemDto.setNombre("Producto no encontrado");
+                    itemDto.setImagen(null);
+                }
+                productosDto.add(itemDto);
             }
-
-            OperacionResponseDTO.ItemOperacionResponseDTO itemDto =
-                new OperacionResponseDTO.ItemOperacionResponseDTO();
-
-            itemDto.setProductoId(op.getProductoId());
-            itemDto.setCantidad(op.getCantidad());
-
-            if (productoDto != null) {
-                itemDto.setNombre(productoDto.getName());
-                itemDto.setImagen(productoDto.getImage());
-            } else {
-                itemDto.setNombre("Producto no encontrado");
-                itemDto.setImagen(null);
-            }
-
-            productosDto.add(itemDto);
+            dto.setProductos(productosDto);
+            response.add(dto);
         }
 
-        dto.setProductos(productosDto);
-        response.add(dto);
+        return ResponseEntity.ok(response);
     }
 
-    return ResponseEntity.ok(response);
-}
     // Registrar nueva operación con múltiples productos
     @PostMapping
     public ResponseEntity<?> registrarOperacion(@RequestBody OperacionRequestDTO request) {
