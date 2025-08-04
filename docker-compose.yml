@@ -1,0 +1,95 @@
+version: "3"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.10.4
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
+    ports:
+      - 9200:9200
+    networks:
+      - elasticnet
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.10.4
+    container_name: kibana
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    ports:
+      - 5601:5601
+    networks:
+      - elasticnet
+
+  eureka-server:
+    build:
+      context: ./eureka-server
+      dockerfile: Dockerfile
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - elasticnet
+    environment:
+      - SPRING_APPLICATION_NAME=eureka-server
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=false
+      - EUREKA_CLIENT_FETCH_REGISTRY=false
+
+  gateway-service:
+    build:
+      context: ./gateway-service
+      dockerfile: Dockerfile
+    container_name: gateway-service
+    ports:
+      - "8082:8080" # 8082 externo mapeado a 8080 interno
+    depends_on:
+      - eureka-server
+    networks:
+      - elasticnet
+    environment:
+      - SPRING_APPLICATION_NAME=gateway-service
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - EUREKA_CLIENT_REGISTER_WITH_EUREKA=true
+      - EUREKA_CLIENT_FETCH_REGISTRY=true
+
+  operator-service:
+    build:
+      context: ./operator-service
+      dockerfile: Dockerfile
+    container_name: operator-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/operadordb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+    networks:
+      - elasticnet
+    depends_on:
+      - elasticsearch
+      - eureka-server
+
+  inventory-service:
+    build:
+      context: ./inventory-service
+      dockerfile: Dockerfile
+    container_name: inventory-service
+    ports:
+      - "8080:8080"
+    environment:
+      - spring.elasticsearch.uris=http://elasticsearch:9200
+      - spring.application.name=inventory-service
+      - eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka
+      - eureka.client.register-with-eureka=true
+      - eureka.client.fetch-registry=true
+    depends_on:
+      - elasticsearch
+      - eureka-server
+    networks:
+      - elasticnet
+
+networks:
+  elasticnet:
+    driver: bridge
