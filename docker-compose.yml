@@ -61,9 +61,9 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/operadordb
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=
+      - SPRING_DATASOURCE_URL=jdbc:mysql://<RAILWAY_HOST>:<PORT>/<DB>
+      - SPRING_DATASOURCE_USERNAME=<USER>
+      - SPRING_DATASOURCE_PASSWORD=<PASS>
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
     networks:
       - elasticnet
