@@ -17,7 +17,7 @@ spring:
             - Path=/api/operaciones/**
     globalcors:
       corsConfigurations:
-        "[/**]":
+        "/**":
           allowedOrigins:
             - "https://tiendagimnasio.vercel.app"
           allowedMethods:
