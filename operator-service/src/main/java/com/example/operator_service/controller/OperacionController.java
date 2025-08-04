@@ -50,8 +50,10 @@ public class OperacionController {
 
             try {
                 productoDto = buscadorClient.getProductoById(op.getProductoId());
-            } catch (FeignException.NotFound e) {
-                // productoDto remains null
+            }} catch (FeignException e) {
+                e.printStackTrace();
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al contactar con inventory-service: " + e.contentUTF8());  
             }
 
             OperacionResponseDTO.ItemOperacionResponseDTO itemDto =
