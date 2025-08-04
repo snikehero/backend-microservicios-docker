@@ -33,7 +33,7 @@ public class OperacionController {
 
     // Obtener todas las operaciones con productos enriquecidos (nombre, imagen)
     @GetMapping
-public ResponseEntity<List<OperacionResponseDTO>> obtenerTodas() {
+    public ResponseEntity<List<OperacionResponseDTO>> obtenerTodas() {
     List<Operacion> operaciones = operacionRepository.findAll();
     List<OperacionResponseDTO> response = new ArrayList<>();
 
@@ -46,12 +46,12 @@ public ResponseEntity<List<OperacionResponseDTO>> obtenerTodas() {
         List<OperacionResponseDTO.ItemOperacionResponseDTO> productosDto = new ArrayList<>();
 
         for (OperacionProducto op : operacion.getProductos()) {
-            BuscadorClient.ProductoDto productoInfo = null;
+            BuscadorClient.ProductoDto productoDto = null;
 
             try {
-                productoInfo = buscadorClient.getProductoById(op.getProductoId());
+                productoDto = buscadorClient.getProductoById(op.getProductoId());
             } catch (FeignException.NotFound e) {
-                // productoInfo remains null
+                // productoDto remains null
             }
 
             OperacionResponseDTO.ItemOperacionResponseDTO itemDto =
@@ -60,9 +60,9 @@ public ResponseEntity<List<OperacionResponseDTO>> obtenerTodas() {
             itemDto.setProductoId(op.getProductoId());
             itemDto.setCantidad(op.getCantidad());
 
-            if (productoInfo != null) {
-                itemDto.setNombre(productoInfo.getName());
-                itemDto.setImagen(productoInfo.getImage());
+            if (productoDto != null) {
+                itemDto.setNombre(productoDto.getName());
+                itemDto.setImagen(productoDto.getImage());
             } else {
                 itemDto.setNombre("Producto no encontrado");
                 itemDto.setImagen(null);
