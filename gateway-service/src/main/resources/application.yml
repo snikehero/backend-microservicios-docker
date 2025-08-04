@@ -8,10 +8,10 @@ spring:
     gateway:
       routes:
         - id: inventory-route
-          uri: lb://INVENTORY-SERVICE
+          uri: lb://inventory-service
           predicates:
             - Path=/api/productos/**
         - id: operator-route
-          uri: lb://OPERATOR-SERVICE
+          uri: lb://operator-service
           predicates:
             - Path=/api/operaciones/**
