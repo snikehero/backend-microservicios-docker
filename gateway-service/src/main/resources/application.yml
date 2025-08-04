@@ -15,6 +15,20 @@ spring:
           uri: lb://OPERATOR-SERVICE
           predicates:
             - Path=/api/operaciones/**
+    globalcors:
+      corsConfigurations:
+        "[/**]":
+          allowedOrigins:
+            - "https://tiendagimnasio.vercel.app"
+          allowedMethods:
+            - GET
+            - POST
+            - OPTIONS
+            - PUT
+            - DELETE
+          allowedHeaders:
+            - "*"
+          allowCredentials: true
 
 eureka:
   client:
