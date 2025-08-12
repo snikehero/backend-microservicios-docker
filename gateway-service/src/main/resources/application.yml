@@ -11,6 +11,7 @@ spring:
           uri: https://inventory-production-f2a0.up.railway.app
           predicates:
             - Path=/api/productos/**
+            - Method=GET,POST
         - id: operator-route
           uri: https://operator-production-a9b6.up.railway.app
           predicates:
