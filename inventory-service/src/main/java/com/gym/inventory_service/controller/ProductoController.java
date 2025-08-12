@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/productos")
+
 public class ProductoController {
 
     @Autowired
@@ -86,4 +87,15 @@ public class ProductoController {
     public SearchFacets.Response searchWithFacets(@RequestBody SearchFacets.Request request) {
         return facetSearchService.search(request);
     }
+    // 1) Ping GET para verificar que el path base está siendo mapeado
+@GetMapping("/search-agg/ping")
+public java.util.Map<String,Object> pingSearchAgg() {
+    return java.util.Map.of("ok", true, "msg", "GET /api/productos/search-agg/ping reachable");
+}
+
+// 2) Eco POST sin dependencias del service (descarta problemas en FacetSearchService)
+@PostMapping(value = "/search-agg/echo", consumes = {"application/json", "*/*"}, produces = "application/json")
+public java.util.Map<String,Object> echo(@RequestBody(required = false) java.util.Map<String,Object> body) {
+    return java.util.Map.of("echo", body == null ? java.util.Map.of() : body);
+}
 }
