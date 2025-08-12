@@ -5,7 +5,8 @@ import com.gym.inventory_service.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.gym.inventory_service.dto.SearchFacets;
+import com.gym.inventory_service.service.FacetSearchService;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,7 +16,8 @@ public class ProductoController {
 
     @Autowired
     private ProductoRepository repository;
-
+    @Autowired
+    private FacetSearchService facetSearchService;
     // Obtener todos los productos
     @GetMapping
     public Iterable<Producto> listar() {
@@ -79,5 +81,9 @@ public class ProductoController {
     @GetMapping("/search")
     public List<Producto> buscarPorNombre(@RequestParam String name) {
         return repository.findByNameContaining(name); // método definido en el ElasticsearchRepository
+    }
+    @PostMapping("/search-agg")
+    public SearchFacets.Response searchWithFacets(@RequestBody SearchFacets.Request request) {
+        return facetSearchService.search(request);
     }
 }
