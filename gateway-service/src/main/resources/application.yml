@@ -8,7 +8,7 @@ spring:
     gateway:
       routes:
         - id: inventory-route
-          uri: https://inventory-production-f2a0.up.railway.app
+          uri: https://invetory-production-7fa7.up.railway.app
           predicates:
             - Path=/api/productos/**
             - Method=GET,POST
